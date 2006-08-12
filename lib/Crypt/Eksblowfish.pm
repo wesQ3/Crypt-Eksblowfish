@@ -43,7 +43,7 @@ use strict;
 
 use XSLoader;
 
-our $VERSION = "0.000";
+our $VERSION = "0.001";
 
 XSLoader::load(__PACKAGE__, $VERSION);
 
@@ -121,7 +121,7 @@ L<http://www.usenix.org/events/usenix99/provos/provos_html/node4.html>
 
 =head1 AUTHOR
 
-Eksblowfish guts originally by Solar Designer <solar@openwall.com>.
+Eksblowfish guts originally by Solar Designer (solar at openwall.com).
 
 Modifications and Perl interface by Andrew Main (Zefram)
 <zefram@fysh.org>.

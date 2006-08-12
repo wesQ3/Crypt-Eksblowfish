@@ -40,7 +40,7 @@ use strict;
 use Carp qw(croak);
 use Crypt::Eksblowfish;
 
-our $VERSION = "0.000";
+our $VERSION = "0.001";
 
 =head1 CONSTRUCTOR
 

@@ -5,8 +5,8 @@
 
 /*
  * This Blowfish code is derived from the Blowfish crypt() code written
- * by Solar Designer <solar@openwall.com> in 1998-2002 and placed in the
- * public domain.  Original at <http://www.openwall.com/crypt/>.
+ * by Solar Designer (solar at openwall.com) in 1998-2002 and placed in
+ * the public domain.  Original at <http://www.openwall.com/crypt/>.
  * Extensively modified by Andrew Main (Zefram) <zefram@fysh.org>.
  */
 
