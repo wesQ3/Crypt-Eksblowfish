@@ -1,3 +1,21 @@
+version 0.002; 2007-09-17
+
+  * bugfix: correctly handle UTF8-encoded scalars
+
+  * don't use ppport.h, because it wasn't doing anything for perl v5.6+
+
+  * test POD syntax and coverage
+
+  * build with Module::Build instead of ExtUtils::MakeMaker
+
+  * rearrange source tree to fit Module::Build convention
+
+  * complete dependency list
+
+  * include signature in distribution
+
+  * in documentation, separate "license" section from "copyright" section
+
 version 0.001; 2006-08-12
 
   * obfuscate Solar Designer's email address, at eir request

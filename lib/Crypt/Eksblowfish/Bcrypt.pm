@@ -41,7 +41,7 @@ use Carp qw(croak);
 use Crypt::Eksblowfish;
 use MIME::Base64 2.21 qw(encode_base64 decode_base64);
 
-our $VERSION = "0.001";
+our $VERSION = "0.002";
 
 use base "Exporter";
 our @EXPORT_OK = qw(bcrypt_hash en_base64 de_base64 bcrypt);
@@ -176,7 +176,9 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2006, 2007 Andrew Main (Zefram) <zefram@fysh.org>
+
+=head1 LICENSE
 
 This module is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

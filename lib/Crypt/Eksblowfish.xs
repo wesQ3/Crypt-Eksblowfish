@@ -1,7 +1,6 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
-#include "ppport.h"
 
 /*
  * This Blowfish code is derived from the Blowfish crypt() code written
@@ -490,26 +489,42 @@ static void setup_ks(int cost, const unsigned char *salt,
 	}
 }
 
+static void
+sv_to_octets(U8 **octets_p, STRLEN *len_p, bool *must_free_p, SV *sv)
+{
+	U8 *in_str = SvPV(sv, *len_p);
+	bool is_utf8 = !!SvUTF8(sv);
+	*octets_p = bytes_from_utf8(in_str, len_p, &is_utf8);
+	if(is_utf8)
+		croak("input must contain only octets");
+	*must_free_p = *octets_p != in_str;
+}
+
 MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish
 
 SV *
 _setup_keyschedule(unsigned cost, SV *salt_sv, SV *key_sv)
 PROTOTYPE: $$$
 INIT:
-	size_t salt_len, key_len;
-	char *salt_bytes, *key_bytes;
+	STRLEN salt_len, key_len;
+	U8 *salt_octets, *key_octets;
+	bool salt_tofree, key_tofree;
 	BF_key_schedule keysched;
 CODE:
 	if(cost > 31)
 		croak("cost parameters greater than 31 are not supported yet");
-	salt_bytes = SvPV(salt_sv, salt_len);
+	sv_to_octets(&salt_octets, &salt_len, &salt_tofree, salt_sv);
 	if(salt_len != 16)
-		croak("salt must be exactly sixteen bytes long");
-	key_bytes = SvPV(key_sv, key_len);
+		croak("salt must be exactly sixteen octets long");
+	sv_to_octets(&key_octets, &key_len, &key_tofree, key_sv);
 	if(key_len < 1 || key_len > (BF_N + 2) * 4)
-		croak("key must be between 1 and %d bytes long", (BF_N+2) * 4);
-	setup_ks(cost, (unsigned char *)salt_bytes,
-		 (unsigned char *)key_bytes, key_len, &keysched);
+		croak("key must be between 1 and %d octets long", (BF_N+2)*4);
+	setup_ks(cost, (unsigned char *)salt_octets,
+		 (unsigned char *)key_octets, key_len, &keysched);
+	if(salt_tofree)
+		Safefree(salt_octets);
+	if(key_tofree)
+		Safefree(key_octets);
 	RETVAL = newSVpvn((char *)&keysched, sizeof(keysched));
 OUTPUT:
 	RETVAL
@@ -518,21 +533,30 @@ SV *
 _encrypt_block(SV *keysched_sv, SV *pt_block_sv)
 PROTOTYPE: $$
 INIT:
-	size_t keysched_len, pt_block_len;
-	char *keysched_bytes, *pt_block_bytes;
-	char ct_block_bytes[8];
+	STRLEN keysched_len, pt_block_len;
+	U8 *keysched_octets, *pt_block_octets;
+	bool keysched_tofree, pt_block_tofree;
+	BF_key_schedule keysched;
+	U8 ct_block_octets[8];
 CODE:
-	keysched_bytes = SvPV(keysched_sv, keysched_len);
+	sv_to_octets(&keysched_octets, &keysched_len, &keysched_tofree,
+		keysched_sv);
 	if(keysched_len != sizeof(BF_key_schedule))
 		croak("faulty key schedule");
-	pt_block_bytes = SvPV(pt_block_sv, pt_block_len);
+	memcpy(&keysched, keysched_octets, sizeof(BF_key_schedule));
+	if(keysched_tofree)
+		Safefree(keysched_octets);
+	sv_to_octets(&pt_block_octets, &pt_block_len, &pt_block_tofree,
+		pt_block_sv);
 	if(pt_block_len != 8)
-		croak("block must be exactly eight bytes long");
+		croak("block must be exactly eight octets long");
 	export_block(
-		encrypt_block((BF_key_schedule *)keysched_bytes,
-			      import_block((unsigned char *)pt_block_bytes)),
-		(unsigned char *)ct_block_bytes);
-	RETVAL = newSVpvn(ct_block_bytes, 8);
+		encrypt_block(&keysched,
+			      import_block((unsigned char *)pt_block_octets)),
+		(unsigned char *)ct_block_octets);
+	if(pt_block_tofree)
+		Safefree(pt_block_octets);
+	RETVAL = newSVpvn(ct_block_octets, 8);
 OUTPUT:
 	RETVAL
 
@@ -540,20 +564,29 @@ SV *
 _decrypt_block(SV *keysched_sv, SV *ct_block_sv)
 PROTOTYPE: $$
 INIT:
-	size_t keysched_len, ct_block_len;
-	char *keysched_bytes, *ct_block_bytes;
-	char pt_block_bytes[8];
+	STRLEN keysched_len, ct_block_len;
+	U8 *keysched_octets, *ct_block_octets;
+	bool keysched_tofree, ct_block_tofree;
+	BF_key_schedule keysched;
+	U8 pt_block_octets[8];
 CODE:
-	keysched_bytes = SvPV(keysched_sv, keysched_len);
+	sv_to_octets(&keysched_octets, &keysched_len, &keysched_tofree,
+		keysched_sv);
 	if(keysched_len != sizeof(BF_key_schedule))
 		croak("faulty key schedule");
-	ct_block_bytes = SvPV(ct_block_sv, ct_block_len);
+	memcpy(&keysched, keysched_octets, sizeof(BF_key_schedule));
+	if(keysched_tofree)
+		Safefree(keysched_octets);
+	sv_to_octets(&ct_block_octets, &ct_block_len, &ct_block_tofree,
+		ct_block_sv);
 	if(ct_block_len != 8)
-		croak("block must be exactly eight bytes long");
+		croak("block must be exactly eight octets long");
 	export_block(
-		decrypt_block((BF_key_schedule *)keysched_bytes,
-			      import_block((unsigned char *)ct_block_bytes)),
-		(unsigned char *)pt_block_bytes);
-	RETVAL = newSVpvn(pt_block_bytes, 8);
+		decrypt_block(&keysched,
+			      import_block((unsigned char *)ct_block_octets)),
+		(unsigned char *)pt_block_octets);
+	if(ct_block_tofree)
+		Safefree(ct_block_octets);
+	RETVAL = newSVpvn(pt_block_octets, 8);
 OUTPUT:
 	RETVAL

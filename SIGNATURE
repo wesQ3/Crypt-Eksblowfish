@@ -1,0 +1,43 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.55.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 0bc3351e37b3dbc594fe80cd16f49aee2a6b17b6 .cvsignore
+SHA1 d5f4738aa3a42da94ab7b301aa45f8f94cac0e02 Build.PL
+SHA1 a7d61a46bae5dcd2595d51ab56073310e6a41f20 Changes
+SHA1 d510379ed5aac8a743b070baa6089f13f6eb7288 MANIFEST
+SHA1 783da56a382b7042b20854efaab8cfa440210e5a META.yml
+SHA1 cd14ada78fb37a0d926edd86eddcdf7f939de582 Makefile.PL
+SHA1 de47eca464a0db3d0b35d6b48c7224aa9af100b0 README
+SHA1 1008eae74fc0ed04ffe262cf934bbe7ef3b56c18 lib/Crypt/.cvsignore
+SHA1 266cdcc274460f60a9ce9048814771f92f1a5adb lib/Crypt/Eksblowfish.pm
+SHA1 66f0aaac00882ae553c651f7979c9edbfb0877ac lib/Crypt/Eksblowfish.xs
+SHA1 306070b8664222cd9b8d0d512e218febb4e2876f lib/Crypt/Eksblowfish/Bcrypt.pm
+SHA1 d8d56a3c5383dff399f6612254b0479d0e064d76 lib/Crypt/Eksblowfish/Family.pm
+SHA1 a3a4795c74aa3ee0843661732861fb7e33546682 t/base64.t
+SHA1 1120a3dcfca77dba0f098a8e256502d409c572c1 t/bcrypt.t
+SHA1 ab642bf302d854ce2d3dd6b2ac157c048958d924 t/bcrypt_hash.t
+SHA1 c7db1d5140934612262b6550c9f92651b23ac28e t/eksblowfish.t
+SHA1 f6296e1592fd1dcf9a062a97ce3666d3114409f0 t/family.t
+SHA1 0e141eecf3ca4903ef38d9413b5403a9ddb0392f t/pod_cvg.t
+SHA1 74a957cd8b93f25672ecc6aa578a671d084dd343 t/pod_syn.t
+SHA1 b26fdaaf35efc7d7de03610e1d0c72f18b9c8137 t/utf8.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD4DBQFG7uYVOV9mt2VyAVERAm70AJiRdh8MsmDOkxKyrYVbi06bZTgoAJ9ierca
+Dy/iQgcje/uB6tlHneHYmg==
+=whTZ
+-----END PGP SIGNATURE-----

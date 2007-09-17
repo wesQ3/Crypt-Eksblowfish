@@ -1,16 +1,21 @@
 .cvsignore
+Build.PL
 Changes
-Eksblowfish.xs
 MANIFEST
 META.yml
 Makefile.PL
 README
+lib/Crypt/.cvsignore
 lib/Crypt/Eksblowfish.pm
+lib/Crypt/Eksblowfish.xs
 lib/Crypt/Eksblowfish/Bcrypt.pm
 lib/Crypt/Eksblowfish/Family.pm
-ppport.h
 t/base64.t
 t/bcrypt.t
 t/bcrypt_hash.t
 t/eksblowfish.t
 t/family.t
+t/pod_cvg.t
+t/pod_syn.t
+t/utf8.t
+SIGNATURE    Added here by Module::Build

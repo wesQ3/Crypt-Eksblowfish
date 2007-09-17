@@ -43,7 +43,7 @@ use strict;
 
 use XSLoader;
 
-our $VERSION = "0.001";
+our $VERSION = "0.002";
 
 XSLoader::load(__PACKAGE__, $VERSION);
 
@@ -128,14 +128,16 @@ Modifications and Perl interface by Andrew Main (Zefram)
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006 Andrew Main (Zefram) <zefram@fysh.org>
-
-This module is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+Copyright (C) 2006, 2007 Andrew Main (Zefram) <zefram@fysh.org>
 
 The original Eksblowfish code (in the form of crypt()) from which
 this module is derived is in the public domain.  It may be found at
 L<http://www.openwall.com/crypt/>.
+
+=head1 LICENSE
+
+This module is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut
 

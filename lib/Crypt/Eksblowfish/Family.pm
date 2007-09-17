@@ -40,7 +40,7 @@ use strict;
 use Carp qw(croak);
 use Crypt::Eksblowfish;
 
-our $VERSION = "0.001";
+our $VERSION = "0.002";
 
 =head1 CONSTRUCTOR
 
@@ -141,7 +141,9 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2006, 2007 Andrew Main (Zefram) <zefram@fysh.org>
+
+=head1 LICENSE
 
 This module is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
