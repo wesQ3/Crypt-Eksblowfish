@@ -402,52 +402,79 @@ static BF_block decrypt_block(const BF_key_schedule *ks, BF_block blk)
 	return blk;
 }
 
-static BF_block import_block(const unsigned char bytes[8])
+static BF_block import_block(const unsigned char octets[8])
 {
 	BF_block blk;
-	blk.L = (((BF_word)bytes[0]) << 24) |
-		(((BF_word)bytes[1]) << 16) |
-		(((BF_word)bytes[2]) <<  8) |
-		 ((BF_word)bytes[3]);
-	blk.R = (((BF_word)bytes[4]) << 24) |
-		(((BF_word)bytes[5]) << 16) |
-		(((BF_word)bytes[6]) <<  8) |
-		 ((BF_word)bytes[7]);
+	blk.L = (((BF_word)octets[0]) << 24) |
+		(((BF_word)octets[1]) << 16) |
+		(((BF_word)octets[2]) <<  8) |
+		 ((BF_word)octets[3]);
+	blk.R = (((BF_word)octets[4]) << 24) |
+		(((BF_word)octets[5]) << 16) |
+		(((BF_word)octets[6]) <<  8) |
+		 ((BF_word)octets[7]);
 	return blk;
 }
 
-static void export_block(BF_block blk, unsigned char bytes[8])
+static void export_block(BF_block blk, unsigned char octets[8])
 {
-	bytes[0] = (blk.L >> 24) & 0xff;
-	bytes[1] = (blk.L >> 16) & 0xff;
-	bytes[2] = (blk.L >>  8) & 0xff;
-	bytes[3] = (blk.L      ) & 0xff;
-	bytes[4] = (blk.R >> 24) & 0xff;
-	bytes[5] = (blk.R >> 16) & 0xff;
-	bytes[6] = (blk.R >>  8) & 0xff;
-	bytes[7] = (blk.R      ) & 0xff;
+	octets[0] = (blk.L >> 24) & 0xff;
+	octets[1] = (blk.L >> 16) & 0xff;
+	octets[2] = (blk.L >>  8) & 0xff;
+	octets[3] = (blk.L      ) & 0xff;
+	octets[4] = (blk.R >> 24) & 0xff;
+	octets[5] = (blk.R >> 16) & 0xff;
+	octets[6] = (blk.R >>  8) & 0xff;
+	octets[7] = (blk.R      ) & 0xff;
 }
 
-static void setup_ks(int cost, const unsigned char *salt,
+static void expand_key(const unsigned char *key, size_t keylen,
+	BF_round_key_set expkey)
+{
+	const unsigned char *kend = key + keylen;
+	const unsigned char *kptr;
+	int i;
+	for (kptr = key, i = 0; i != BF_N + 2; i++) {
+		BF_word tmp = 0;
+		int j;
+		for (j = 0; j != 4; j++) {
+			tmp = (tmp << 8) | *kptr++;
+			if (kptr == kend) kptr = key;
+		}
+		expkey[i] = tmp;
+	}
+}
+
+static void merge_key(const BF_round_key_set expkey, BF_key_schedule *ks)
+{
+	int i;
+	for(i = BF_N + 2; i--; ) {
+		ks->P[i] ^= expkey[i];
+	}
+}
+
+static void munge_subkeys(BF_key_schedule *ks)
+{
+	BF_block blk = { 0, 0 };
+	BF_word *subkey_ptr;
+	for(subkey_ptr = ks->P; subkey_ptr != ks[1].P; ) {
+		blk = encrypt_block(ks, blk);
+		*subkey_ptr++ = blk.L;
+		*subkey_ptr++ = blk.R;
+	}
+}
+
+static void setup_eksblowfish_ks(int cost, const unsigned char *salt,
 	const unsigned char *key, size_t keylen, BF_key_schedule *ks)
 {
 	BF_round_key_set expanded_key;
 	BF_round_key_set expanded_salt;
 	BF_block blk;
 	BF_word *subkey_ptr;
-	const unsigned char *kend = key + keylen;
-	const unsigned char *kptr;
 	unsigned int count;
 	int i, j;
 
-	for (kptr = key, i = 0; i != BF_N + 2; i++) {
-		BF_word tmp = 0;
-		for (j = 0; j != 4; j++) {
-			tmp = (tmp << 8) | *kptr++;
-			if (kptr == kend) kptr = key;
-		}
-		expanded_key[i] = tmp;
-	}
+	expand_key(key, keylen, expanded_key);
 	for(i = 0; i != 4; i += 2) {
 		BF_block sblk;
 		sblk = import_block(salt + i*4);
@@ -459,10 +486,8 @@ static void setup_ks(int cost, const unsigned char *salt,
 	}
 
 	memcpy(ks, &BF_init_state, sizeof(*ks));
+	merge_key(expanded_key, ks);
 
-	for(i = BF_N + 2; i--; ) {
-		ks->P[i] ^= expanded_key[i];
-	}
 	blk.L = blk.R = 0;
 	for(subkey_ptr = ks->P, j = 0; subkey_ptr != ks[1].P; j ^= 2) {
 		blk.L ^= expanded_salt[j];
@@ -474,23 +499,25 @@ static void setup_ks(int cost, const unsigned char *salt,
 
 	for(count = 1U << cost; count--; ) {
 		for(j = 0; j != 2; j++) {
-			BF_word *keypart =
-				j == 0 ? expanded_key : expanded_salt;
-			for(i = BF_N + 2; i--; ) {
-				ks->P[i] ^= keypart[i];
-			}
-			blk.L = blk.R = 0;
-			for(subkey_ptr = ks->P; subkey_ptr != ks[1].P; ) {
-				blk = encrypt_block(ks, blk);
-				*subkey_ptr++ = blk.L;
-				*subkey_ptr++ = blk.R;
-			}
+			merge_key(j == 0 ? expanded_key : expanded_salt, ks);
+			munge_subkeys(ks);
 		}
 	}
 }
 
-static void
-sv_to_octets(U8 **octets_p, STRLEN *len_p, bool *must_free_p, SV *sv)
+static void setup_blowfish_ks(const unsigned char *key, size_t keylen,
+	BF_key_schedule *ks)
+{
+	BF_round_key_set expanded_key;
+
+	expand_key(key, keylen, expanded_key);
+	memcpy(ks, &BF_init_state, sizeof(*ks));
+	merge_key(expanded_key, ks);
+	munge_subkeys(ks);
+}
+
+static void sv_to_octets(U8 **octets_p, STRLEN *len_p, bool *must_free_p,
+	SV *sv)
 {
 	U8 *in_str = SvPV(sv, *len_p);
 	bool is_utf8 = !!SvUTF8(sv);
@@ -500,93 +527,226 @@ sv_to_octets(U8 **octets_p, STRLEN *len_p, bool *must_free_p, SV *sv)
 	*must_free_p = *octets_p != in_str;
 }
 
-MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish
+typedef BF_key_schedule *Crypt__Eksblowfish__Subkeyed;
+typedef BF_key_schedule *Crypt__Eksblowfish;
+typedef BF_key_schedule *Crypt__Eksblowfish__Blowfish;
+typedef BF_key_schedule *Crypt__Eksblowfish__Uklblowfish;
+
+MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish::Subkeyed
+
+int
+blocksize(SV *invocant)
+PROTOTYPE: $
+CODE:
+	RETVAL = 8;
+OUTPUT:
+	RETVAL
+
+BF_block
+encrypt(Crypt::Eksblowfish::Subkeyed ks, BF_block pt_block)
+PROTOTYPE: $$
+CODE:
+	RETVAL = encrypt_block(ks, pt_block);
+OUTPUT:
+	RETVAL
+
+BF_block
+decrypt(Crypt::Eksblowfish::Subkeyed ks, BF_block ct_block)
+PROTOTYPE: $$
+CODE:
+	RETVAL = decrypt_block(ks, ct_block);
+OUTPUT:
+	RETVAL
 
 SV *
-_setup_keyschedule(unsigned cost, SV *salt_sv, SV *key_sv)
+p_array(Crypt::Eksblowfish::Subkeyed ks)
+PROTOTYPE: $
+INIT:
+	AV *rka;
+	int i;
+CODE:
+	rka = newAV();
+	av_fill(rka, BF_N+2 - 1);
+	for(i = 0; i != BF_N+2; i++) {
+		av_store(rka, i, newSVuv(ks->P[i]));
+	}
+	RETVAL = newRV_noinc((SV *)rka);
+OUTPUT:
+	RETVAL
+
+SV *
+s_boxes(Crypt::Eksblowfish::Subkeyed ks)
+PROTOTYPE: $
+INIT:
+	AV *aa, *ab;
+	int i, j;
+CODE:
+	ab = newAV();
+	av_fill(ab, 4 - 1);
+	for(j = 0; j != 4; j++) {
+		aa = newAV();
+		av_fill(aa, 256 - 1);
+		for(i = 0; i != 256; i++) {
+			av_store(aa, i, newSVuv(ks->S[j][i]));
+		}
+		av_store(ab, j, newRV_noinc((SV *)aa));
+	}
+	RETVAL = newRV_noinc((SV *)ab);
+OUTPUT:
+	RETVAL
+
+bool
+is_weak(Crypt::Eksblowfish::Subkeyed ks)
+PROTOTYPE: $
+INIT:
+	int s, i, j;
+CODE:
+	RETVAL = 0;
+	for(s = 4; s--; ) {
+		for(i = 256; --i; ) {
+			BF_word si = ks->S[s][i];
+			for(j = i; j--; ) {
+				if(ks->S[s][j] == si) {
+					RETVAL = 1;
+					goto done;
+				}
+			}
+		}
+	}
+	done: ;
+OUTPUT:
+	RETVAL
+
+void
+DESTROY(Crypt::Eksblowfish::Subkeyed ks)
+PROTOTYPE: $
+CODE:
+	Safefree(ks);
+
+Crypt::Eksblowfish::Subkeyed
+new_from_subkeys(SV *class, AV *parray, AV *sboxes)
 PROTOTYPE: $$$
+INIT:
+	int i, j;
+CODE:
+	Newx(RETVAL, 1, BF_key_schedule);
+	if(av_len(parray) != BF_N+2 - 1) {
+		Safefree(RETVAL);
+		croak("need exactly %d round keys", BF_N+2);
+	}
+	for(i = 0; i != BF_N+2; i++) {
+		SV **item_p = av_fetch(parray, i, 0);
+		RETVAL->P[i] = SvUV(item_p ? *item_p : &PL_sv_undef);
+	}
+	if(av_len(sboxes) != 4 - 1) {
+		Safefree(RETVAL);
+		croak("need exactly four S-boxes");
+	}
+	for(j = 0; j != 4; j++) {
+		SV **item_p = av_fetch(sboxes, j, 0);
+		SV *sbox_sv = item_p ? *item_p : &PL_sv_undef;
+		AV *sbox;
+		if(!SvROK(sbox_sv)) {
+			Safefree(RETVAL);
+			croak("S-box sub-argument must be reference");
+		}
+		sbox = (AV *)SvRV(sbox_sv);
+		if(SvTYPE((SV *)sbox) != SVt_PVAV) {
+			Safefree(RETVAL);
+			croak("S-box sub-argument must be reference to array");
+		}
+		if(av_len(sbox) != 256 - 1) {
+			Safefree(RETVAL);
+			croak("need exactly 256 entries per S-box");
+		}
+		for(i = 0; i != 256; i++) {
+			SV **item_p = av_fetch(sbox, i, 0);
+			RETVAL->S[j][i] =
+				SvUV(item_p ? *item_p : &PL_sv_undef);
+		}
+	}
+OUTPUT:
+	RETVAL
+
+Crypt::Eksblowfish::Subkeyed
+new_initial(SV *class)
+PROTOTYPE: $
+CODE:
+	Newx(RETVAL, 1, BF_key_schedule);
+	memcpy(RETVAL, &BF_init_state, sizeof(BF_init_state));
+OUTPUT:
+	RETVAL
+
+MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish
+
+Crypt::Eksblowfish
+new(SV *class, unsigned cost, SV *salt_sv, SV *key_sv)
+PROTOTYPE: $$$$
 INIT:
 	STRLEN salt_len, key_len;
 	U8 *salt_octets, *key_octets;
 	bool salt_tofree, key_tofree;
-	BF_key_schedule keysched;
+	U8 salt[16];
 CODE:
 	if(cost > 31)
 		croak("cost parameters greater than 31 are not supported yet");
 	sv_to_octets(&salt_octets, &salt_len, &salt_tofree, salt_sv);
-	if(salt_len != 16)
+	if(salt_len != 16) {
+		if(salt_tofree) Safefree(salt_octets);
 		croak("salt must be exactly sixteen octets long");
+	}
+	memcpy(salt, salt_octets, 16);
+	if(salt_tofree) Safefree(salt_octets);
 	sv_to_octets(&key_octets, &key_len, &key_tofree, key_sv);
-	if(key_len < 1 || key_len > (BF_N + 2) * 4)
+	if(key_len < 1 || key_len > (BF_N + 2) * 4) {
+		if(key_tofree) Safefree(key_octets);
 		croak("key must be between 1 and %d octets long", (BF_N+2)*4);
-	setup_ks(cost, (unsigned char *)salt_octets,
-		 (unsigned char *)key_octets, key_len, &keysched);
-	if(salt_tofree)
-		Safefree(salt_octets);
-	if(key_tofree)
-		Safefree(key_octets);
-	RETVAL = newSVpvn((char *)&keysched, sizeof(keysched));
+	}
+	Newx(RETVAL, 1, BF_key_schedule);
+	setup_eksblowfish_ks(cost, (unsigned char *)salt_octets,
+		 (unsigned char *)key_octets, key_len, RETVAL);
+	if(key_tofree) Safefree(key_octets);
 OUTPUT:
 	RETVAL
 
-SV *
-_encrypt_block(SV *keysched_sv, SV *pt_block_sv)
+MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish::Blowfish
+
+Crypt::Eksblowfish::Blowfish
+new(SV *class, SV *key_sv)
 PROTOTYPE: $$
 INIT:
-	STRLEN keysched_len, pt_block_len;
-	U8 *keysched_octets, *pt_block_octets;
-	bool keysched_tofree, pt_block_tofree;
-	BF_key_schedule keysched;
-	U8 ct_block_octets[8];
+	STRLEN key_len;
+	U8 *key_octets;
+	bool key_tofree;
 CODE:
-	sv_to_octets(&keysched_octets, &keysched_len, &keysched_tofree,
-		keysched_sv);
-	if(keysched_len != sizeof(BF_key_schedule))
-		croak("faulty key schedule");
-	memcpy(&keysched, keysched_octets, sizeof(BF_key_schedule));
-	if(keysched_tofree)
-		Safefree(keysched_octets);
-	sv_to_octets(&pt_block_octets, &pt_block_len, &pt_block_tofree,
-		pt_block_sv);
-	if(pt_block_len != 8)
-		croak("block must be exactly eight octets long");
-	export_block(
-		encrypt_block(&keysched,
-			      import_block((unsigned char *)pt_block_octets)),
-		(unsigned char *)ct_block_octets);
-	if(pt_block_tofree)
-		Safefree(pt_block_octets);
-	RETVAL = newSVpvn(ct_block_octets, 8);
+	sv_to_octets(&key_octets, &key_len, &key_tofree, key_sv);
+	if(key_len < 4 || key_len > 56) {
+		if(key_tofree) Safefree(key_octets);
+		croak("key must be between 4 and 56 octets long");
+	}
+	Newx(RETVAL, 1, BF_key_schedule);
+	setup_blowfish_ks((unsigned char *)key_octets, key_len, RETVAL);
+	if(key_tofree) Safefree(key_octets);
 OUTPUT:
 	RETVAL
 
-SV *
-_decrypt_block(SV *keysched_sv, SV *ct_block_sv)
+MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish::Uklblowfish
+
+Crypt::Eksblowfish::Uklblowfish
+new(SV *class, SV *key_sv)
 PROTOTYPE: $$
 INIT:
-	STRLEN keysched_len, ct_block_len;
-	U8 *keysched_octets, *ct_block_octets;
-	bool keysched_tofree, ct_block_tofree;
-	BF_key_schedule keysched;
-	U8 pt_block_octets[8];
+	STRLEN key_len;
+	U8 *key_octets;
+	bool key_tofree;
 CODE:
-	sv_to_octets(&keysched_octets, &keysched_len, &keysched_tofree,
-		keysched_sv);
-	if(keysched_len != sizeof(BF_key_schedule))
-		croak("faulty key schedule");
-	memcpy(&keysched, keysched_octets, sizeof(BF_key_schedule));
-	if(keysched_tofree)
-		Safefree(keysched_octets);
-	sv_to_octets(&ct_block_octets, &ct_block_len, &ct_block_tofree,
-		ct_block_sv);
-	if(ct_block_len != 8)
-		croak("block must be exactly eight octets long");
-	export_block(
-		decrypt_block(&keysched,
-			      import_block((unsigned char *)ct_block_octets)),
-		(unsigned char *)pt_block_octets);
-	if(ct_block_tofree)
-		Safefree(ct_block_octets);
-	RETVAL = newSVpvn(pt_block_octets, 8);
+	sv_to_octets(&key_octets, &key_len, &key_tofree, key_sv);
+	if(key_len < 1 || key_len > (BF_N + 2) * 4) {
+		if(key_tofree) Safefree(key_octets);
+		croak("key must be between 1 and %d octets long", (BF_N+2)*4);
+	}
+	Newx(RETVAL, 1, BF_key_schedule);
+	setup_blowfish_ks((unsigned char *)key_octets, key_len, RETVAL);
+	if(key_tofree) Safefree(key_octets);
 OUTPUT:
 	RETVAL

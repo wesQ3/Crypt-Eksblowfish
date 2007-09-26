@@ -14,18 +14,23 @@ Crypt::Eksblowfish - the Eksblowfish block cipher
 	$ciphertext = $cipher->encrypt($plaintext);
 	$plaintext = $cipher->decrypt($ciphertext);
 
+	$p_array = $cipher->p_array;
+	$s_boxes = $cipher->s_boxes;
+	if($cipher->is_weak) { ...
+
 =head1 DESCRIPTION
 
 An object of this type encapsulates a keyed instance of the Eksblowfish
 block cipher, ready to encrypt and decrypt.
 
-Eksblowfish is a variant of the Blowfish cipher, modified to make the
-key setup very expensive.  ("Eks" stands for "expensive key schedule".)
-This doesn't make it significantly cryptographically stronger,
-but is intended to hinder brute-force attacks.  It also makes it
-unsuitable for any application requiring key agility.  It was designed
-by Niels Provos and David Mazieres for password hashing in OpenBSD.
-See L<Crypt::Eksblowfish::Bcrypt> for the hash algorithm.
+Eksblowfish is a variant of the Blowfish cipher, modified to make
+the key setup very expensive.  ("Eks" stands for "expensive key
+schedule".)  This doesn't make it significantly cryptographically
+stronger, but is intended to hinder brute-force attacks.  It also
+makes it unsuitable for any application requiring key agility.  It was
+designed by Niels Provos and David Mazieres for password hashing in
+OpenBSD.  See L<Crypt::Eksblowfish::Bcrypt> for the hash algorithm.
+See L<Crypt::Eksblowfish::Blowfish> for the unmodified Blowfish cipher.
 
 Eksblowfish is a parameterised (family-keyed) cipher.  It takes a cost
 parameter that controls how expensive the key scheduling is.  It also
@@ -43,9 +48,22 @@ use strict;
 
 use XSLoader;
 
-our $VERSION = "0.002";
+our $VERSION = "0.003";
+
+use base "Crypt::Eksblowfish::Subkeyed";
 
 XSLoader::load(__PACKAGE__, $VERSION);
+
+=head1 CLASS METHODS
+
+=over
+
+=item Crypt::Eksblowfish->blocksize
+
+Returns 8, indicating the Eksblowfish block size of 8 octets.  This method
+may be called on either the class or an instance.
+
+=back
 
 =head1 CONSTRUCTOR
 
@@ -54,12 +72,12 @@ XSLoader::load(__PACKAGE__, $VERSION);
 =item Crypt::Eksblowfish->new(COST, SALT, KEY)
 
 Performs key setup on a new instance of the Eksblowfish algorithm,
-returning the keyed state.  The KEY may be any length from 1 byte to 72
-bytes inclusive.  The SALT is a family key, and must be exactly 16 bytes.
-COST is an integer parameter controlling the expense of keying: the
-number of operations in key setup is proportional to 2^COST.  All three
-parameters influence all the subkeys; changing any of them produces a
-different encryption function.
+returning the keyed state.  The KEY may be any length from 1 octet to
+72 octets inclusive.  The SALT is a family key, and must be exactly
+16 octets.  COST is an integer parameter controlling the expense of
+keying: the number of operations in key setup is proportional to 2^COST.
+All three parameters influence all the subkeys; changing any of them
+produces a different encryption function.
 
 Due to the mandatory family-keying parameters (COST and SALT), this
 constructor does not match the interface expected by C<Crypt::CBC>.  To
@@ -67,56 +85,49 @@ use Eksblowfish with C<Crypt::CBC> it is necessary to have an object that
 encapsulates a cipher family and provides a constructor that takes only a
 key argument.  That facility is supplied by C<Crypt::Eksblowfish::Family>.
 
-=cut
-
-sub new($$$$) {
-	my($class, $cost, $salt, $key) = @_;
-	my $ks = _setup_keyschedule($cost, $salt, $key);
-	return bless(\$ks, $class);
-}
-
 =back
 
 =head1 METHODS
 
 =over
 
-=item Crypt::Eksblowfish->blocksize
-
 =item $cipher->blocksize
 
-Returns 8, indicating the Eksblowfish block size of 8 bytes.  This method
+Returns 8, indicating the Eksblowfish block size of 8 octets.  This method
 may be called on either the class or an instance.
-
-=cut
-
-sub blocksize($) { 8 }
 
 =item $cipher->encrypt(PLAINTEXT)
 
-PLAINTEXT must be exactly eight bytes.  The block is encrypted, and the
-ciphertext is returned.
-
-=cut
-
-sub encrypt($$) { _encrypt_block(${$_[0]}, $_[1]) }
+PLAINTEXT must be exactly eight octets.  The block is encrypted, and
+the ciphertext is returned.
 
 =item $cipher->decrypt(CIPHERTEXT)
 
-CIPHERTEXT must be exactly eight bytes.  The block is decrypted, and
+CIPHERTEXT must be exactly eight octets.  The block is decrypted, and
 the plaintext is returned.
 
-=cut
+=item $cipher->p_array
 
-sub decrypt($$) { _decrypt_block(${$_[0]}, $_[1]) }
+=item $cipher->s_boxes
+
+These methods extract the subkeys from the keyed cipher.
+This is not required in ordinary operation.  See the superclass
+L<Crypt::Eksblowfish::Subkeyed> for details.
+
+=item $cipher->is_weak
+
+This method checks whether the cipher has been keyed with a weak key.
+It may be desired to avoid using weak keys.  See the superclass
+L<Crypt::Eksblowfish::Subkeyed> for details.
 
 =back
 
 =head1 SEE ALSO
 
-L<Crypt::Blowfish>,
 L<Crypt::Eksblowfish::Bcrypt>,
+L<Crypt::Eksblowfish::Blowfish>,
 L<Crypt::Eksblowfish::Family>,
+L<Crypt::Eksblowfish::Subkeyed>,
 L<http://www.usenix.org/events/usenix99/provos/provos_html/node4.html>
 
 =head1 AUTHOR

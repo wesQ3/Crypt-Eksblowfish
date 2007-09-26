@@ -15,29 +15,36 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 0bc3351e37b3dbc594fe80cd16f49aee2a6b17b6 .cvsignore
-SHA1 d5f4738aa3a42da94ab7b301aa45f8f94cac0e02 Build.PL
-SHA1 a7d61a46bae5dcd2595d51ab56073310e6a41f20 Changes
-SHA1 d510379ed5aac8a743b070baa6089f13f6eb7288 MANIFEST
-SHA1 783da56a382b7042b20854efaab8cfa440210e5a META.yml
+SHA1 d0e4a27d5d3ca02b5d9cbe78f7739dc25b03b065 Build.PL
+SHA1 fb46e665dd99af9971e13292b9bf23184711c765 Changes
+SHA1 84bd916d8a2c3f833fa36df262ef1033a805f606 MANIFEST
+SHA1 c36de175f6d1a3da8d627c3e3d64359141b81f9e META.yml
 SHA1 cd14ada78fb37a0d926edd86eddcdf7f939de582 Makefile.PL
 SHA1 de47eca464a0db3d0b35d6b48c7224aa9af100b0 README
 SHA1 1008eae74fc0ed04ffe262cf934bbe7ef3b56c18 lib/Crypt/.cvsignore
-SHA1 266cdcc274460f60a9ce9048814771f92f1a5adb lib/Crypt/Eksblowfish.pm
-SHA1 66f0aaac00882ae553c651f7979c9edbfb0877ac lib/Crypt/Eksblowfish.xs
-SHA1 306070b8664222cd9b8d0d512e218febb4e2876f lib/Crypt/Eksblowfish/Bcrypt.pm
-SHA1 d8d56a3c5383dff399f6612254b0479d0e064d76 lib/Crypt/Eksblowfish/Family.pm
+SHA1 b578620f09c85194dea887599adb0527294440ea lib/Crypt/Eksblowfish.pm
+SHA1 3091e457e255a2f8e47c9cbea0a3f29e2ce5186e lib/Crypt/Eksblowfish.xs
+SHA1 faf00a4b8226add61e45b2d38154383a3445782b lib/Crypt/Eksblowfish/Bcrypt.pm
+SHA1 1dcfdc88f4db90d2eb5f0146d4de906778911c61 lib/Crypt/Eksblowfish/Blowfish.pm
+SHA1 10815f5e2e752da081bd809b1925dc76c1acd41e lib/Crypt/Eksblowfish/Family.pm
+SHA1 1c4e81ea5315941430007d2bf1d676ae31b12e1f lib/Crypt/Eksblowfish/Subkeyed.pm
+SHA1 e860263180b9e4aa7371fae092c8bea5cc8453e0 lib/Crypt/Eksblowfish/Uklblowfish.pm
 SHA1 a3a4795c74aa3ee0843661732861fb7e33546682 t/base64.t
 SHA1 1120a3dcfca77dba0f098a8e256502d409c572c1 t/bcrypt.t
 SHA1 ab642bf302d854ce2d3dd6b2ac157c048958d924 t/bcrypt_hash.t
-SHA1 c7db1d5140934612262b6550c9f92651b23ac28e t/eksblowfish.t
+SHA1 78281a46f37b2d462a6466fbcd2a8c286244d92c t/blowfish.t
+SHA1 295d7ffc486abcafa5322371fcdf238b1a1d3ead t/eksblowfish.t
 SHA1 f6296e1592fd1dcf9a062a97ce3666d3114409f0 t/family.t
 SHA1 0e141eecf3ca4903ef38d9413b5403a9ddb0392f t/pod_cvg.t
 SHA1 74a957cd8b93f25672ecc6aa578a671d084dd343 t/pod_syn.t
+SHA1 8ef086a24068f32855e337e6a9d493135785f883 t/subkey.t
+SHA1 e089de26e9fcea3a851ff111eb0446d60ecbd89a t/uklblowfish.t
 SHA1 b26fdaaf35efc7d7de03610e1d0c72f18b9c8137 t/utf8.t
+SHA1 aa343eeed20ef0b6a0ff15d35e82333c2c1a7f19 typemap
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.6 (GNU/Linux)
 
-iD4DBQFG7uYVOV9mt2VyAVERAm70AJiRdh8MsmDOkxKyrYVbi06bZTgoAJ9ierca
-Dy/iQgcje/uB6tlHneHYmg==
-=whTZ
+iD8DBQFG+rnvOV9mt2VyAVERAtrFAJwL56/HZPvX+kB7+RfoU6nIC9lWwwCfQYX3
+r0H5lIhwcVOksG0xYWh2SCE=
+=3oBy
 -----END PGP SIGNATURE-----

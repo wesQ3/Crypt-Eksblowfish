@@ -23,7 +23,7 @@ for discussion of the Eksblowfish algorithm.
 
 It is intended that an object of this class can be used as the "-cipher"
 parameter to C<Crypt::CBC> and similar systems.  Normally that parameter
-is the name of a class, such as "Crypt::Blowfish", where the class
+is the name of a class, such as "Crypt::Rijndael", where the class
 implements a block cipher algorithm.  The class provides a C<new>
 constructor that accepts a key.  In the case of Eksblowfish, the key
 alone is not sufficient.  An Eksblowfish family fills the role of block
@@ -38,9 +38,11 @@ use warnings;
 use strict;
 
 use Carp qw(croak);
-use Crypt::Eksblowfish;
+use Crypt::Eksblowfish 0.002;
 
-our $VERSION = "0.002";
+our $VERSION = "0.003";
+
+use fields qw(cost salt);
 
 =head1 CONSTRUCTOR
 
@@ -48,16 +50,20 @@ our $VERSION = "0.002";
 
 =item Crypt::Eksblowfish::Family->new_family(COST, SALT)
 
-Creates and returns an object representing the Eksblowfish cipher family
-specified by the parameters.  The SALT is a family key, and must be
-exactly 16 bytes.  COST is an integer parameter controlling the expense of
-keying: the number of operations in key setup is proportional to 2^COST.
+Creates and returns an object representing the Eksblowfish cipher
+family specified by the parameters.  The SALT is a family key, and must
+be exactly 16 octets.  COST is an integer parameter controlling the
+expense of keying: the number of operations in key setup is proportional
+to 2^COST.
 
 =cut
 
 sub new_family($$$) {
 	my($class, $cost, $salt) = @_;
-	return bless({ cost => $cost, salt => $salt }, $class);
+	my Crypt::Eksblowfish::Family $self = fields::new($class);
+	$self->{cost} = $cost;
+	$self->{salt} = $salt;
+	return $self;
 }
 
 =back
@@ -72,7 +78,10 @@ Extracts and returns the cost parameter.
 
 =cut
 
-sub cost($) { $_[0]->{cost} }
+sub cost($) {
+	my Crypt::Eksblowfish::Family $self = shift;
+	return $self->{cost};
+}
 
 =item $family->salt
 
@@ -80,11 +89,14 @@ Extracts and returns the salt parameter.
 
 =cut
 
-sub salt($) { $_[0]->{salt} }
+sub salt($) {
+	my Crypt::Eksblowfish::Family $self = shift;
+	return $self->{salt};
+}
 
 =item $family->blocksize
 
-Returns 8, indicating the Eksblowfish block size of 8 bytes.
+Returns 8, indicating the Eksblowfish block size of 8 octets.
 
 =cut
 
@@ -102,8 +114,8 @@ sub keysize($) { 0 }
 =item $family->new(KEY)
 
 Performs key setup on a new instance of the Eksblowfish algorithm,
-returning the keyed state.  The KEY may be any length from 1 byte to 72
-bytes inclusive.  The object returned is of class C<Crypt::Eksblowfish>;
+returning the keyed state.  The KEY may be any length from 1 octet to 72
+octets inclusive.  The object returned is of class C<Crypt::Eksblowfish>;
 see L<Crypt::Eksblowfish> for the encryption and decryption methods.
 
 Note that this method is called on a family object, not on the class
@@ -112,10 +124,11 @@ C<Crypt::Eksblowfish::Family>.
 =cut
 
 sub new($$) {
-	my($self, $key) = @_;
 	croak "Crypt::Eksblowfish::Family::new is not a class method ".
 			"(perhaps you want new_family instead)"
-		if ref($self) eq "";
+		if ref($_[0]) eq "";
+	my Crypt::Eksblowfish::Family $self = shift;
+	my($key) = @_;
 	return Crypt::Eksblowfish->new($self->{cost}, $self->{salt}, $key);
 }
 

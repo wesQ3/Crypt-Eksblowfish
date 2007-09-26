@@ -25,6 +25,7 @@ Module::Build->new(
 		MIME::Base64 => "2.21",
 		XSLoader => 0,
 		base => 0,
+		fields => 0,
 		perl => "5.006",
 		strict => 0,
 		warnings => 0,

@@ -1,17 +1,32 @@
-use Test::More tests => 42;
+use Test::More tests => 12 + 6*11;
 
 BEGIN { use_ok "Crypt::Eksblowfish"; }
 
 is(Crypt::Eksblowfish->blocksize, 8);
+
+eval { Crypt::Eksblowfish->new(-1, "a" x 16, "abcd") }; isnt $@, "";
+eval { Crypt::Eksblowfish->new(0, "a" x 15, "abcd") }; isnt $@, "";
+eval { Crypt::Eksblowfish->new(0, "a" x 17, "abcd") }; isnt $@, "";
+eval { Crypt::Eksblowfish->new(0, "a" x 16, "") }; isnt $@, "";
+eval { Crypt::Eksblowfish->new(0, "a" x 16, "a") }; is $@, "";
+eval { Crypt::Eksblowfish->new(0, "a" x 16, "a" x 72) }; is $@, "";
+eval { Crypt::Eksblowfish->new(0, "a" x 16, "a" x 73) }; isnt $@, "";
+
+my $cipher = Crypt::Eksblowfish->new(0, "a" x 16, "abcd");
+ok $cipher;
+is $cipher->p_array->[2], 0x7653a00a;
+is $cipher->s_boxes->[2]->[222], 0xee8053dc;
 
 while(<DATA>) {
 	my($cost, @data) = split;
 	my($salt, $pt, $ct, $key) = map { pack("H*", $_) } @data;
 	my $cipher = Crypt::Eksblowfish->new($cost, $salt, $key);
 	ok $cipher;
+	is ref($cipher), "Crypt::Eksblowfish";
 	is $cipher->blocksize, 8;
 	is $cipher->encrypt($pt), $ct;
 	is $cipher->decrypt($ct), $pt;
+	is !!$cipher->is_weak, $key eq pack("H*", "67df71d0acdcbef5");
 }
 
 __DATA__
@@ -25,3 +40,4 @@ __DATA__
 7 d05f3e37e0abb779485cb0c42d4898b2 9fade3ceb8780bdb 38b574199128a028 0365bd0af501
 8 e1aedf7b96277f44bf7ee57abe2ad0c4 099845e9998a5d66 ccbdfdd5dd8243eb 3c2dae71
 9 0bc4788fa499faac1e54e6c8d3c492d8 bffb573ea1a50827 b663a0daeaf7db86 32711230b5b1ce
+0 632883779720f1b6a8cb65f9526e638f e1b46bade19d63d5 597cde1ed988cc79 67df71d0acdcbef5

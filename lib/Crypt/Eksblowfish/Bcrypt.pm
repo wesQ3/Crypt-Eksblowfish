@@ -14,8 +14,8 @@ Crypt::Eksblowfish::Bcrypt - Blowfish-based Unix crypt() password hash
 
 	use Crypt::Eksblowfish::Bcrypt qw(en_base64 de_base64);
 
-	$text = en_base64($bytes);
-	$bytes = de_base64($text);
+	$text = en_base64($octets);
+	$octets = de_base64($text);
 
 	use Crypt::Eksblowfish::Bcrypt qw(bcrypt);
 
@@ -38,10 +38,10 @@ use warnings;
 use strict;
 
 use Carp qw(croak);
-use Crypt::Eksblowfish;
+use Crypt::Eksblowfish 0.002;
 use MIME::Base64 2.21 qw(encode_base64 decode_base64);
 
-our $VERSION = "0.002";
+our $VERSION = "0.003";
 
 use base "Exporter";
 our @EXPORT_OK = qw(bcrypt_hash en_base64 de_base64 bcrypt);
@@ -53,7 +53,7 @@ our @EXPORT_OK = qw(bcrypt_hash en_base64 de_base64 bcrypt);
 =item bcrypt_hash(SETTINGS, PASSWORD)
 
 Hashes PASSWORD according to the supplied SETTINGS, and returns the
-23-byte hash.  SETTINGS must be a reference to a hash, with these keys:
+23-octet hash.  SETTINGS must be a reference to a hash, with these keys:
 
 =over
 
@@ -71,7 +71,7 @@ The number of operations is proportional to 2^cost.
 
 =item B<salt>
 
-Exactly sixteen bytes of salt.
+Exactly sixteen octets of salt.
 
 =back
 
@@ -95,22 +95,22 @@ sub bcrypt_hash($$) {
 
 =item en_base64(BYTES)
 
-Encodes the byte string textually using the form of base 64 that is
+Encodes the octet string textually using the form of base 64 that is
 conventionally used with bcrypt.
 
 =cut
 
 sub en_base64($) {
-	my($bytes) = @_;
-	my $text = encode_base64($bytes, "");
+	my($octets) = @_;
+	my $text = encode_base64($octets, "");
 	$text =~ tr#A-Za-z0-9+/=#./A-Za-z0-9#d;
 	return $text;
 }
 
 =item de_base64(TEXT)
 
-Decodes a byte string that was textually encoded using the form of base
-64 that is conventionally used with bcrypt.
+Decodes an octet string that was textually encoded using the form of
+base 64 that is conventionally used with bcrypt.
 
 =cut
 
