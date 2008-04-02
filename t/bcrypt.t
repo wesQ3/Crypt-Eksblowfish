@@ -5,7 +5,7 @@ BEGIN { use_ok "Crypt::Eksblowfish::Bcrypt", qw(bcrypt); }
 my @wrong_passwords = qw(foo quux supercalifragilisticexpialidocious);
 while(<DATA>) {
 	chomp;
-	s/(\S+) (\S+) *//;
+	s/([^ ]+) ([^ ]+) *//;
 	my($settings, $hash) = ($1, $2);
 	is bcrypt($_, $settings), $settings.$hash;
 	isnt bcrypt($_, $settings), $settings.$hash foreach (@wrong_passwords);

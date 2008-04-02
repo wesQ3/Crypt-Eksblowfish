@@ -40,7 +40,7 @@ use strict;
 use Carp qw(croak);
 use Crypt::Eksblowfish 0.002;
 
-our $VERSION = "0.003";
+our $VERSION = "0.004";
 
 use fields qw(cost salt);
 
@@ -154,7 +154,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2006, 2007, 2008 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

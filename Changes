@@ -1,3 +1,9 @@
+version 0.004; 2008-04-02
+
+  * add backward-compatibility definition of Newx() macro
+
+  * in tests, avoid unreliable "\S" regexp element
+
 version 0.003; 2007-09-26
 
   * bugfix: in Crypt::Eksblowfish::{Bcrypt,Family}, ensure that the

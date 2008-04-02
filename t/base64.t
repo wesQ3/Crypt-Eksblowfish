@@ -6,7 +6,7 @@ is en_base64(""), "";
 is de_base64(""), "";
 
 while(<DATA>) {
-	my($hex, $base64) = (/(\S+) (\S+)/);
+	my($hex, $base64) = (/([^ \n]+) ([^ \n]+)/);
 	my $bytes = pack("H*", $hex);
 	is en_base64($bytes), $base64;
 	is de_base64($base64), $bytes;

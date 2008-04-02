@@ -2,6 +2,10 @@
 #include "perl.h"
 #include "XSUB.h"
 
+#ifndef Newx
+# define Newx(v,n,t) New(0,v,n,t)
+#endif /* !Newx */
+
 /*
  * This Blowfish code is derived from the Blowfish crypt() code written
  * by Solar Designer (solar at openwall.com) in 1998-2002 and placed in

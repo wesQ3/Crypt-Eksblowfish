@@ -44,7 +44,7 @@ use strict;
 
 use XSLoader;
 
-our $VERSION = "0.003";
+our $VERSION = "0.004";
 
 use base "Crypt::Eksblowfish::Subkeyed";
 
@@ -140,7 +140,7 @@ Modifications and Perl interface by Andrew Main (Zefram)
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2006, 2007, 2008 Andrew Main (Zefram) <zefram@fysh.org>
 
 The original Eksblowfish code (in the form of crypt()) from which
 this module is derived is in the public domain.  It may be found at
