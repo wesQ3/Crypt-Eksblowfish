@@ -38,9 +38,9 @@ use warnings;
 use strict;
 
 use Carp qw(croak);
-use Crypt::Eksblowfish 0.002;
+use Crypt::Eksblowfish 0.005;
 
-our $VERSION = "0.004";
+our $VERSION = "0.005";
 
 use fields qw(cost salt);
 

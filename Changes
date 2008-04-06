@@ -1,3 +1,15 @@
+version 0.005; 2008-04-06
+
+  * bugfix: when UTF8-decoding salt, don't attempt to read freed copy
+
+  * don't rely on typemap handling of AV* arguments, because it's broken
+    on perl 5.6
+
+  * add backward-compatibility definition of bytes_from_utf8() function
+
+  * avoid calling XSLoader::load() redundantly, which was causing
+    redefinition warnings on older versions of XSLoader
+
 version 0.004; 2008-04-02
 
   * add backward-compatibility definition of Newx() macro

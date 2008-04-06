@@ -38,10 +38,10 @@ use warnings;
 use strict;
 
 use Carp qw(croak);
-use Crypt::Eksblowfish 0.002;
+use Crypt::Eksblowfish 0.005;
 use MIME::Base64 2.21 qw(encode_base64 decode_base64);
 
-our $VERSION = "0.004";
+our $VERSION = "0.005";
 
 use base "Exporter";
 our @EXPORT_OK = qw(bcrypt_hash en_base64 de_base64 bcrypt);

@@ -73,13 +73,12 @@ package Crypt::Eksblowfish::Uklblowfish;
 use warnings;
 use strict;
 
-use XSLoader;
-
-our $VERSION = "0.004";
+our $VERSION = "0.005";
 
 use base "Crypt::Eksblowfish::Subkeyed";
 
-XSLoader::load("Crypt::Eksblowfish", $VERSION);
+die "mismatched versions of Crypt::Eksblowfish modules"
+	unless $Crypt::Eksblowfish::Subkeyed::VERSION eq $VERSION;
 
 =head1 CLASS METHODS
 

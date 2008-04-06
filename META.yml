@@ -1,6 +1,6 @@
 ---
 name: Crypt-Eksblowfish
-version: 0.004
+version: 0.005
 author:
   - Solar Designer (solar at openwall.com)
   - 'Andrew Main (Zefram) <zefram@fysh.org>'
@@ -29,22 +29,22 @@ dynamic_config: 0
 provides:
   Crypt::Eksblowfish:
     file: lib/Crypt/Eksblowfish.pm
-    version: 0.004
+    version: 0.005
   Crypt::Eksblowfish::Bcrypt:
     file: lib/Crypt/Eksblowfish/Bcrypt.pm
-    version: 0.004
+    version: 0.005
   Crypt::Eksblowfish::Blowfish:
     file: lib/Crypt/Eksblowfish/Blowfish.pm
-    version: 0.004
+    version: 0.005
   Crypt::Eksblowfish::Family:
     file: lib/Crypt/Eksblowfish/Family.pm
-    version: 0.004
+    version: 0.005
   Crypt::Eksblowfish::Subkeyed:
     file: lib/Crypt/Eksblowfish/Subkeyed.pm
-    version: 0.004
+    version: 0.005
   Crypt::Eksblowfish::Uklblowfish:
     file: lib/Crypt/Eksblowfish/Uklblowfish.pm
-    version: 0.004
+    version: 0.005
 generated_by: Module::Build version 0.2808
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

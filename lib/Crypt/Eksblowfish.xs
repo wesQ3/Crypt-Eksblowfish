@@ -6,6 +6,48 @@
 # define Newx(v,n,t) New(0,v,n,t)
 #endif /* !Newx */
 
+#ifndef bytes_from_utf8
+
+/* 5.6.0 has UTF-8 scalars, but lacks the utility bytes_from_utf8() */
+
+static U8 *
+bytes_from_utf8(U8 *orig, STRLEN *len_p, bool *is_utf8_p)
+{
+	STRLEN orig_len = *len_p;
+	U8 *orig_end = orig + orig_len;
+	STRLEN new_len = orig_len;
+	U8 *new;
+	U8 *p, *q;
+	if(!*is_utf8_p)
+		return orig;
+	for(p = orig; p != orig_end; ) {
+		U8 fb = *p++, sb;
+		if(fb <= 0x7f)
+			continue;
+		if(p == orig_end || !(fb >= 0xc2 && fb <= 0xc3))
+			return orig;
+		sb = *p++;
+		if(!(sb >= 0x80 && sb <= 0xbf))
+			return orig;
+		new_len--;
+	}
+	if(new_len == orig_len) {
+		*is_utf8_p = 0;
+		return orig;
+	}
+	Newx(new, new_len+1, U8);
+	for(p = orig, q = new; p != orig_end; ) {
+		U8 fb = *p++;
+		*q++ = fb <= 0x7f ? fb : ((fb & 0x03) << 6) | (*p++ & 0x3f);
+	}
+	*q = 0;
+	*len_p = new_len;
+	*is_utf8_p = 0;
+	return new;
+}
+
+#endif /* !bytes_from_utf8 */
+
 /*
  * This Blowfish code is derived from the Blowfish crypt() code written
  * by Solar Designer (solar at openwall.com) in 1998-2002 and placed in
@@ -628,11 +670,22 @@ CODE:
 	Safefree(ks);
 
 Crypt::Eksblowfish::Subkeyed
-new_from_subkeys(SV *class, AV *parray, AV *sboxes)
+new_from_subkeys(SV *class, SV *parray_sv, SV *sboxes_sv)
 PROTOTYPE: $$$
 INIT:
+	AV *parray, *sboxes;
 	int i, j;
 CODE:
+	if(!SvROK(parray_sv))
+		croak("P-array argument must be reference");
+	parray = (AV *)SvRV(parray_sv);
+	if(SvTYPE((SV *)parray) != SVt_PVAV)
+		croak("P-array argument must be reference to array");
+	if(!SvROK(sboxes_sv))
+		croak("S-boxes argument must be reference");
+	sboxes = (AV *)SvRV(sboxes_sv);
+	if(SvTYPE((SV *)sboxes) != SVt_PVAV)
+		croak("S-boxes argument must be reference to array");
 	Newx(RETVAL, 1, BF_key_schedule);
 	if(av_len(parray) != BF_N+2 - 1) {
 		Safefree(RETVAL);
@@ -707,7 +760,7 @@ CODE:
 		croak("key must be between 1 and %d octets long", (BF_N+2)*4);
 	}
 	Newx(RETVAL, 1, BF_key_schedule);
-	setup_eksblowfish_ks(cost, (unsigned char *)salt_octets,
+	setup_eksblowfish_ks(cost, (unsigned char *)salt,
 		 (unsigned char *)key_octets, key_len, RETVAL);
 	if(key_tofree) Safefree(key_octets);
 OUTPUT:
