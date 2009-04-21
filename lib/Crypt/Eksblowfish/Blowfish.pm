@@ -42,9 +42,9 @@ package Crypt::Eksblowfish::Blowfish;
 use warnings;
 use strict;
 
-our $VERSION = "0.005";
+our $VERSION = "0.006";
 
-use base "Crypt::Eksblowfish::Subkeyed";
+use parent "Crypt::Eksblowfish::Subkeyed";
 
 die "mismatched versions of Crypt::Eksblowfish modules"
 	unless $Crypt::Eksblowfish::Subkeyed::VERSION eq $VERSION;
@@ -67,7 +67,7 @@ handled specially by C<Crypt::CBC>.
 
 =cut
 
-sub keysize($) { 0 }
+sub keysize { 0 }
 
 =head1 CONSTRUCTOR
 
@@ -139,7 +139,8 @@ Modifications and Perl interface by Andrew Main (Zefram)
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2006, 2007, 2008, 2009
+Andrew Main (Zefram) <zefram@fysh.org>
 
 The original Eksblowfish code (in the form of crypt()) from which
 this module is derived is in the public domain.  It may be found at

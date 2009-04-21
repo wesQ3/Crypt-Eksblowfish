@@ -1,3 +1,21 @@
+version 0.006; 2009-04-21
+
+  * in C::E::Family, new method "as_class" to work around Crypt::CBC
+    brain damage
+
+  * use simpler "parent" pragma in place of "base"
+
+  * in documentation, use the term "truth value" instead of the less
+    precise "boolean"
+
+  * drop prototypes from method subs (where the prototypes have no effect)
+
+  * in C::E::Family, abandon use of the "fields" module
+
+  * add casts for pointer target signedness to avoid compiler warnings
+
+  * use full stricture in Build.PL
+
 version 0.005; 2008-04-06
 
   * bugfix: when UTF8-decoding salt, don't attempt to read freed copy

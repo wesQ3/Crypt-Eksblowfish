@@ -565,7 +565,7 @@ static void setup_blowfish_ks(const unsigned char *key, size_t keylen,
 static void sv_to_octets(U8 **octets_p, STRLEN *len_p, bool *must_free_p,
 	SV *sv)
 {
-	U8 *in_str = SvPV(sv, *len_p);
+	U8 *in_str = (U8*)SvPV(sv, *len_p);
 	bool is_utf8 = !!SvUTF8(sv);
 	*octets_p = bytes_from_utf8(in_str, len_p, &is_utf8);
 	if(is_utf8)
@@ -582,7 +582,6 @@ MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish::Subkeyed
 
 int
 blocksize(SV *invocant)
-PROTOTYPE: $
 CODE:
 	RETVAL = 8;
 OUTPUT:
@@ -590,7 +589,6 @@ OUTPUT:
 
 BF_block
 encrypt(Crypt::Eksblowfish::Subkeyed ks, BF_block pt_block)
-PROTOTYPE: $$
 CODE:
 	RETVAL = encrypt_block(ks, pt_block);
 OUTPUT:
@@ -598,7 +596,6 @@ OUTPUT:
 
 BF_block
 decrypt(Crypt::Eksblowfish::Subkeyed ks, BF_block ct_block)
-PROTOTYPE: $$
 CODE:
 	RETVAL = decrypt_block(ks, ct_block);
 OUTPUT:
@@ -606,7 +603,6 @@ OUTPUT:
 
 SV *
 p_array(Crypt::Eksblowfish::Subkeyed ks)
-PROTOTYPE: $
 INIT:
 	AV *rka;
 	int i;
@@ -622,7 +618,6 @@ OUTPUT:
 
 SV *
 s_boxes(Crypt::Eksblowfish::Subkeyed ks)
-PROTOTYPE: $
 INIT:
 	AV *aa, *ab;
 	int i, j;
@@ -643,7 +638,6 @@ OUTPUT:
 
 bool
 is_weak(Crypt::Eksblowfish::Subkeyed ks)
-PROTOTYPE: $
 INIT:
 	int s, i, j;
 CODE:
@@ -665,13 +659,11 @@ OUTPUT:
 
 void
 DESTROY(Crypt::Eksblowfish::Subkeyed ks)
-PROTOTYPE: $
 CODE:
 	Safefree(ks);
 
 Crypt::Eksblowfish::Subkeyed
 new_from_subkeys(SV *class, SV *parray_sv, SV *sboxes_sv)
-PROTOTYPE: $$$
 INIT:
 	AV *parray, *sboxes;
 	int i, j;
@@ -727,7 +719,6 @@ OUTPUT:
 
 Crypt::Eksblowfish::Subkeyed
 new_initial(SV *class)
-PROTOTYPE: $
 CODE:
 	Newx(RETVAL, 1, BF_key_schedule);
 	memcpy(RETVAL, &BF_init_state, sizeof(BF_init_state));
@@ -738,7 +729,6 @@ MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish
 
 Crypt::Eksblowfish
 new(SV *class, unsigned cost, SV *salt_sv, SV *key_sv)
-PROTOTYPE: $$$$
 INIT:
 	STRLEN salt_len, key_len;
 	U8 *salt_octets, *key_octets;
@@ -770,7 +760,6 @@ MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish::Blowfish
 
 Crypt::Eksblowfish::Blowfish
 new(SV *class, SV *key_sv)
-PROTOTYPE: $$
 INIT:
 	STRLEN key_len;
 	U8 *key_octets;
@@ -791,7 +780,6 @@ MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish::Uklblowfish
 
 Crypt::Eksblowfish::Uklblowfish
 new(SV *class, SV *key_sv)
-PROTOTYPE: $$
 INIT:
 	STRLEN key_len;
 	U8 *key_octets;

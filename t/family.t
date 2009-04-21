@@ -1,6 +1,9 @@
-use Test::More tests => 111;
+use Test::More tests => 2 + 26*10;
 
 BEGIN { use_ok "Crypt::Eksblowfish::Family"; }
+
+eval { "Crypt::Eksblowfish::Family"->new("a"x16) };
+like $@, qr/Crypt::Eksblowfish::Family::new is not a class method/;
 
 while(<DATA>) {
 	my($cost, @data) = split;
@@ -13,11 +16,30 @@ while(<DATA>) {
 	is $family->salt, $salt;
 	is $family->blocksize, 8;
 	is $family->keysize, 0;
+	eval { $family->encrypt($pt) };
+	like $@, qr/\ACrypt::Eksblowfish::Family::encrypt called/;
 	my $cipher = $family->new($key);
 	ok $cipher;
 	is $cipher->blocksize, 8;
 	is $cipher->encrypt($pt), $ct;
 	is $cipher->decrypt($ct), $pt;
+	my $pkg = $family->as_class;
+	like $pkg, qr/\ACrypt::Eksblowfish::Family::/;
+	is $pkg, $family->as_class;
+	eval { $pkg->new_family($cost, $salt) };
+	like $@, qr/\A${pkg}->new_family called/;
+	ok $pkg->can("keysize");
+	ok $pkg->can("encrypt");
+	is $pkg->cost, $cost;
+	is $pkg->salt, $salt;
+	is $pkg->blocksize, 8;
+	is $pkg->keysize, 0;
+	$cipher = $pkg->new($key);
+	ok $cipher;
+	is $cipher->blocksize, 8;
+	is $cipher->encrypt($pt), $ct;
+	is $cipher->decrypt($ct), $pt;
+	is $pkg->as_class, $pkg;
 }
 
 __DATA__

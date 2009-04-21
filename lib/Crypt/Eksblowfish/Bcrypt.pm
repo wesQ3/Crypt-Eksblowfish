@@ -41,9 +41,9 @@ use Carp qw(croak);
 use Crypt::Eksblowfish 0.005;
 use MIME::Base64 2.21 qw(encode_base64 decode_base64);
 
-our $VERSION = "0.005";
+our $VERSION = "0.006";
 
-use base "Exporter";
+use parent "Exporter";
 our @EXPORT_OK = qw(bcrypt_hash en_base64 de_base64 bcrypt);
 
 =head1 FUNCTIONS
@@ -59,7 +59,7 @@ Hashes PASSWORD according to the supplied SETTINGS, and returns the
 
 =item B<key_nul>
 
-Boolean: whether to append a NUL to the password before using it as a key.
+Truth value: whether to append a NUL to the password before using it as a key.
 The algorithm as originally devised does not do this, but it was later
 modified to do it.  The version that does append NUL is to be preferred;
 not doing so is supported only for backward compatibility.
@@ -176,7 +176,8 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2006, 2007, 2008, 2009
+Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

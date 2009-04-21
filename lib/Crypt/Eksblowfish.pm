@@ -46,9 +46,9 @@ package Crypt::Eksblowfish;
 use warnings;
 use strict;
 
-our $VERSION = "0.005";
+our $VERSION = "0.006";
 
-use base "Crypt::Eksblowfish::Subkeyed";
+use parent "Crypt::Eksblowfish::Subkeyed";
 
 die "mismatched versions of Crypt::Eksblowfish modules"
 	unless $Crypt::Eksblowfish::Subkeyed::VERSION eq $VERSION;
@@ -79,8 +79,9 @@ All three parameters influence all the subkeys; changing any of them
 produces a different encryption function.
 
 Due to the mandatory family-keying parameters (COST and SALT), this
-constructor does not match the interface expected by C<Crypt::CBC>.  To
-use Eksblowfish with C<Crypt::CBC> it is necessary to have an object that
+constructor does not match the interface expected by C<Crypt::CBC>
+and similar crypto plumbing modules.  To
+use Eksblowfish with them it is necessary to have an object that
 encapsulates a cipher family and provides a constructor that takes only a
 key argument.  That facility is supplied by C<Crypt::Eksblowfish::Family>.
 
@@ -138,7 +139,8 @@ Modifications and Perl interface by Andrew Main (Zefram)
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2006, 2007, 2008, 2009
+Andrew Main (Zefram) <zefram@fysh.org>
 
 The original Eksblowfish code (in the form of crypt()) from which
 this module is derived is in the public domain.  It may be found at

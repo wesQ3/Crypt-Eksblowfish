@@ -71,7 +71,7 @@ use strict;
 
 use XSLoader;
 
-our $VERSION = "0.005";
+our $VERSION = "0.006";
 
 XSLoader::load("Crypt::Eksblowfish", $VERSION);
 
@@ -143,7 +143,7 @@ this cipher object.  Each S-box is a 256-element array of 32-bit entries.
 
 =item $cipher->is_weak
 
-Returns a Boolean indicating whether this is a weak key.  A key is
+Returns a truth value indicating whether this is a weak key.  A key is
 considered weak if any S-box contains a pair of identical entries
 (in any positions).  When Blowfish is used with such an S-box, certain
 cryptographic attacks are possible that are not possible against most
@@ -178,7 +178,8 @@ Modifications and Perl interface by Andrew Main (Zefram)
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2006, 2007, 2008, 2009
+Andrew Main (Zefram) <zefram@fysh.org>
 
 The original Eksblowfish code (in the form of crypt()) from which
 this module is derived is in the public domain.  It may be found at
