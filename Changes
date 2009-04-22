@@ -1,3 +1,10 @@
+version 0.007; 2009-04-22
+
+  * in XS code, use the correct "PREINIT:" instead of "INIT:" to introduce
+    variable declarations
+
+  * test Uklblowfish with long keys
+
 version 0.006; 2009-04-21
 
   * in C::E::Family, new method "as_class" to work around Crypt::CBC

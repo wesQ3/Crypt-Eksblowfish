@@ -74,7 +74,7 @@ use Carp qw(croak);
 use Crypt::Eksblowfish 0.005;
 use Class::Mix 0.001 qw(genpkg);
 
-our $VERSION = "0.006";
+our $VERSION = "0.007";
 
 =head1 CONSTRUCTOR
 

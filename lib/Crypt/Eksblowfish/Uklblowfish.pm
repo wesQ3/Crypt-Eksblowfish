@@ -73,7 +73,7 @@ package Crypt::Eksblowfish::Uklblowfish;
 use warnings;
 use strict;
 
-our $VERSION = "0.006";
+our $VERSION = "0.007";
 
 use parent "Crypt::Eksblowfish::Subkeyed";
 

@@ -603,7 +603,7 @@ OUTPUT:
 
 SV *
 p_array(Crypt::Eksblowfish::Subkeyed ks)
-INIT:
+PREINIT:
 	AV *rka;
 	int i;
 CODE:
@@ -618,7 +618,7 @@ OUTPUT:
 
 SV *
 s_boxes(Crypt::Eksblowfish::Subkeyed ks)
-INIT:
+PREINIT:
 	AV *aa, *ab;
 	int i, j;
 CODE:
@@ -638,7 +638,7 @@ OUTPUT:
 
 bool
 is_weak(Crypt::Eksblowfish::Subkeyed ks)
-INIT:
+PREINIT:
 	int s, i, j;
 CODE:
 	RETVAL = 0;
@@ -664,7 +664,7 @@ CODE:
 
 Crypt::Eksblowfish::Subkeyed
 new_from_subkeys(SV *class, SV *parray_sv, SV *sboxes_sv)
-INIT:
+PREINIT:
 	AV *parray, *sboxes;
 	int i, j;
 CODE:
@@ -729,7 +729,7 @@ MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish
 
 Crypt::Eksblowfish
 new(SV *class, unsigned cost, SV *salt_sv, SV *key_sv)
-INIT:
+PREINIT:
 	STRLEN salt_len, key_len;
 	U8 *salt_octets, *key_octets;
 	bool salt_tofree, key_tofree;
@@ -760,7 +760,7 @@ MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish::Blowfish
 
 Crypt::Eksblowfish::Blowfish
 new(SV *class, SV *key_sv)
-INIT:
+PREINIT:
 	STRLEN key_len;
 	U8 *key_octets;
 	bool key_tofree;
@@ -780,7 +780,7 @@ MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish::Uklblowfish
 
 Crypt::Eksblowfish::Uklblowfish
 new(SV *class, SV *key_sv)
-INIT:
+PREINIT:
 	STRLEN key_len;
 	U8 *key_octets;
 	bool key_tofree;
