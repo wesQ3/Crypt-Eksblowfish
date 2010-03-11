@@ -66,12 +66,13 @@ non-randomness in the choice of the key.
 
 package Crypt::Eksblowfish::Subkeyed;
 
+{ use 5.006; }
 use warnings;
 use strict;
 
 use XSLoader;
 
-our $VERSION = "0.007";
+our $VERSION = "0.008";
 
 XSLoader::load("Crypt::Eksblowfish", $VERSION);
 
@@ -178,7 +179,7 @@ Modifications and Perl interface by Andrew Main (Zefram)
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008, 2009
+Copyright (C) 2006, 2007, 2008, 2009, 2010
 Andrew Main (Zefram) <zefram@fysh.org>
 
 The original Eksblowfish code (in the form of crypt()) from which

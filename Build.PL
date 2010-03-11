@@ -1,3 +1,4 @@
+{ use 5.006; }
 use warnings;
 use strict;
 
@@ -10,6 +11,10 @@ Module::Build->new(
 		"Solar Designer (solar at openwall.com)",
 		"Andrew Main (Zefram) <zefram\@fysh.org>",
 	],
+	configure_requires => {
+		"Module::Build" => 0,
+		"perl" => "5.006",
+	},
 	build_requires => {
 		"ExtUtils::CBuilder" => "0.15",
 		"Module::Build" => 0,
@@ -35,4 +40,4 @@ Module::Build->new(
 	sign => 1,
 )->create_build_script;
 
-exit 0;
+1;

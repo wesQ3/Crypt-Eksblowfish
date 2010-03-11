@@ -1,3 +1,16 @@
+version 0.008; 2010-03-11
+
+  * bugfix: avoid memory leak when returning block to Perl space
+
+  * check for required Perl version at runtime
+
+  * in XS, avoid using "class" as a variable name, for compatibility
+    with C++ compilers
+
+  * in Build.PL, explicitly declare configure-time requirements
+
+  * remove bogus "exit 0" from Build.PL
+
 version 0.007; 2009-04-22
 
   * in XS code, use the correct "PREINIT:" instead of "INIT:" to introduce

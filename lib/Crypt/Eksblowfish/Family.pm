@@ -67,6 +67,7 @@ method L</as_class>.
 
 package Crypt::Eksblowfish::Family;
 
+{ use 5.006; }
 use warnings;
 use strict;
 
@@ -74,7 +75,7 @@ use Carp qw(croak);
 use Crypt::Eksblowfish 0.005;
 use Class::Mix 0.001 qw(genpkg);
 
-our $VERSION = "0.007";
+our $VERSION = "0.008";
 
 =head1 CONSTRUCTOR
 
@@ -206,7 +207,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008, 2009
+Copyright (C) 2006, 2007, 2008, 2009, 2010
 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE

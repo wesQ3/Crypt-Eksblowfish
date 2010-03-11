@@ -39,10 +39,11 @@ original Blowfish.
 
 package Crypt::Eksblowfish::Blowfish;
 
+{ use 5.006; }
 use warnings;
 use strict;
 
-our $VERSION = "0.007";
+our $VERSION = "0.008";
 
 use parent "Crypt::Eksblowfish::Subkeyed";
 
@@ -139,7 +140,7 @@ Modifications and Perl interface by Andrew Main (Zefram)
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008, 2009
+Copyright (C) 2006, 2007, 2008, 2009, 2010
 Andrew Main (Zefram) <zefram@fysh.org>
 
 The original Eksblowfish code (in the form of crypt()) from which

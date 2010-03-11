@@ -663,7 +663,7 @@ CODE:
 	Safefree(ks);
 
 Crypt::Eksblowfish::Subkeyed
-new_from_subkeys(SV *class, SV *parray_sv, SV *sboxes_sv)
+new_from_subkeys(SV *classname, SV *parray_sv, SV *sboxes_sv)
 PREINIT:
 	AV *parray, *sboxes;
 	int i, j;
@@ -718,7 +718,7 @@ OUTPUT:
 	RETVAL
 
 Crypt::Eksblowfish::Subkeyed
-new_initial(SV *class)
+new_initial(SV *classname)
 CODE:
 	Newx(RETVAL, 1, BF_key_schedule);
 	memcpy(RETVAL, &BF_init_state, sizeof(BF_init_state));
@@ -728,7 +728,7 @@ OUTPUT:
 MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish
 
 Crypt::Eksblowfish
-new(SV *class, unsigned cost, SV *salt_sv, SV *key_sv)
+new(SV *classname, unsigned cost, SV *salt_sv, SV *key_sv)
 PREINIT:
 	STRLEN salt_len, key_len;
 	U8 *salt_octets, *key_octets;
@@ -759,7 +759,7 @@ OUTPUT:
 MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish::Blowfish
 
 Crypt::Eksblowfish::Blowfish
-new(SV *class, SV *key_sv)
+new(SV *classname, SV *key_sv)
 PREINIT:
 	STRLEN key_len;
 	U8 *key_octets;
@@ -779,7 +779,7 @@ OUTPUT:
 MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish::Uklblowfish
 
 Crypt::Eksblowfish::Uklblowfish
-new(SV *class, SV *key_sv)
+new(SV *classname, SV *key_sv)
 PREINIT:
 	STRLEN key_len;
 	U8 *key_octets;

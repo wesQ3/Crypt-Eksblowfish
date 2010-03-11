@@ -34,6 +34,7 @@ L<http://www.usenix.org/events/usenix99/provos.html>.
 
 package Crypt::Eksblowfish::Bcrypt;
 
+{ use 5.006; }
 use warnings;
 use strict;
 
@@ -41,7 +42,7 @@ use Carp qw(croak);
 use Crypt::Eksblowfish 0.005;
 use MIME::Base64 2.21 qw(encode_base64 decode_base64);
 
-our $VERSION = "0.007";
+our $VERSION = "0.008";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(bcrypt_hash en_base64 de_base64 bcrypt);
@@ -176,7 +177,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008, 2009
+Copyright (C) 2006, 2007, 2008, 2009, 2010
 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
