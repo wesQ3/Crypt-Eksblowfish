@@ -74,7 +74,7 @@ package Crypt::Eksblowfish::Uklblowfish;
 use warnings;
 use strict;
 
-our $VERSION = "0.008";
+our $VERSION = "0.009";
 
 use parent "Crypt::Eksblowfish::Subkeyed";
 
@@ -164,7 +164,7 @@ Modifications and Perl interface by Andrew Main (Zefram)
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008, 2009, 2010
+Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011
 Andrew Main (Zefram) <zefram@fysh.org>
 
 The original Eksblowfish code (in the form of crypt()) from which

@@ -1,3 +1,4 @@
+#define PERL_NO_GET_CONTEXT 1
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
@@ -348,7 +349,8 @@ static const BF_key_schedule BF_init_state = {
 	}
 };
 
-#if defined(__i386__) || defined(__x86_64__) || defined(__alpha__) || defined(__hppa__)
+#if defined(__i386__) || defined(__x86_64__) || defined(__alpha__) || \
+	defined(__hppa__)
 /* Architectures which can shift addresses left by 2 bits with no extra cost */
 #define BF_ROUND(L, R, N) \
 	tmp1 = L & 0xFF; \
@@ -562,8 +564,10 @@ static void setup_blowfish_ks(const unsigned char *key, size_t keylen,
 	munge_subkeys(ks);
 }
 
-static void sv_to_octets(U8 **octets_p, STRLEN *len_p, bool *must_free_p,
-	SV *sv)
+#define sv_to_octets(octets_p, len_p, must_free_p, sv) \
+	THX_sv_to_octets(aTHX_ octets_p, len_p, must_free_p, sv)
+static void THX_sv_to_octets(pTHX_ U8 **octets_p, STRLEN *len_p,
+	bool *must_free_p, SV *sv)
 {
 	U8 *in_str = (U8*)SvPV(sv, *len_p);
 	bool is_utf8 = !!SvUTF8(sv);
@@ -580,9 +584,12 @@ typedef BF_key_schedule *Crypt__Eksblowfish__Uklblowfish;
 
 MODULE = Crypt::Eksblowfish PACKAGE = Crypt::Eksblowfish::Subkeyed
 
+PROTOTYPES: DISABLE
+
 int
 blocksize(SV *invocant)
 CODE:
+	PERL_UNUSED_VAR(invocant);
 	RETVAL = 8;
 OUTPUT:
 	RETVAL
@@ -668,6 +675,7 @@ PREINIT:
 	AV *parray, *sboxes;
 	int i, j;
 CODE:
+	PERL_UNUSED_VAR(classname);
 	if(!SvROK(parray_sv))
 		croak("P-array argument must be reference");
 	parray = (AV *)SvRV(parray_sv);
@@ -720,6 +728,7 @@ OUTPUT:
 Crypt::Eksblowfish::Subkeyed
 new_initial(SV *classname)
 CODE:
+	PERL_UNUSED_VAR(classname);
 	Newx(RETVAL, 1, BF_key_schedule);
 	memcpy(RETVAL, &BF_init_state, sizeof(BF_init_state));
 OUTPUT:
@@ -735,6 +744,7 @@ PREINIT:
 	bool salt_tofree, key_tofree;
 	U8 salt[16];
 CODE:
+	PERL_UNUSED_VAR(classname);
 	if(cost > 31)
 		croak("cost parameters greater than 31 are not supported yet");
 	sv_to_octets(&salt_octets, &salt_len, &salt_tofree, salt_sv);
@@ -765,6 +775,7 @@ PREINIT:
 	U8 *key_octets;
 	bool key_tofree;
 CODE:
+	PERL_UNUSED_VAR(classname);
 	sv_to_octets(&key_octets, &key_len, &key_tofree, key_sv);
 	if(key_len < 4 || key_len > 56) {
 		if(key_tofree) Safefree(key_octets);
@@ -785,6 +796,7 @@ PREINIT:
 	U8 *key_octets;
 	bool key_tofree;
 CODE:
+	PERL_UNUSED_VAR(classname);
 	sv_to_octets(&key_octets, &key_len, &key_tofree, key_sv);
 	if(key_len < 1 || key_len > (BF_N + 2) * 4) {
 		if(key_tofree) Safefree(key_octets);

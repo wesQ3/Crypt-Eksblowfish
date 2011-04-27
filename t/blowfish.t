@@ -1,3 +1,6 @@
+use warnings;
+use strict;
+
 use Test::More tests => 13 + 6*59;
 
 BEGIN { use_ok "Crypt::Eksblowfish::Blowfish"; }
@@ -28,6 +31,8 @@ while(<DATA>) {
 	is $cipher->decrypt($ct), $pt;
 	is !!$cipher->is_weak, $key eq pack("H*", "88b824049795f021");
 }
+
+1;
 
 __DATA__
 0000000000000000 4ef997456198dd78 0000000000000000

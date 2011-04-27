@@ -1,3 +1,6 @@
+use warnings;
+use strict;
+
 use Test::More tests => 69;
 
 BEGIN { use_ok "Crypt::Eksblowfish::Bcrypt", qw(bcrypt); }
@@ -10,6 +13,8 @@ while(<DATA>) {
 	is bcrypt($_, $settings), $settings.$hash;
 	isnt bcrypt($_, $settings), $settings.$hash foreach (@wrong_passwords);
 }
+
+1;
 
 __DATA__
 $2$05$CCCCCCCCCCCCCCCCCCCCC. 7uG0VCzI2bS7j6ymqJi9CdcdxiRTWNy

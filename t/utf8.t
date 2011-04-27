@@ -1,3 +1,6 @@
+use warnings;
+use strict;
+
 use Test::More tests => 8;
 
 BEGIN { use_ok "Crypt::Eksblowfish"; }
@@ -43,3 +46,5 @@ SKIP: {
 	is $cipher->encrypt($tblk), $cipher->encrypt($ublk);
 	is $cipher->decrypt($tblk), $cipher->decrypt($ublk);
 }
+
+1;

@@ -1,3 +1,22 @@
+version 0.009; 2011-04-28
+
+  * in XS, use PERL_NO_GET_CONTEXT for efficiency
+
+  * in XS, declare "PROTOTYPES: DISABLE" to prevent automatic generation
+    of unintended prototypes
+
+  * jump through hoops to avoid compiler warnings
+
+  * use full stricture in test suite
+
+  * in Build.PL, complete declaration of configure-time requirements
+
+  * slightly reformat some Perl and C code to avoid exceeding 80 columns
+
+  * include META.json in distribution
+
+  * add MYMETA.json and MYMETA.yml to .cvsignore
+
 version 0.008; 2010-03-11
 
   * bugfix: avoid memory leak when returning block to Perl space

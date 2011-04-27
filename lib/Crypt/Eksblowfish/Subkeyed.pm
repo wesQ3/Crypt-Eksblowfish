@@ -72,7 +72,7 @@ use strict;
 
 use XSLoader;
 
-our $VERSION = "0.008";
+our $VERSION = "0.009";
 
 XSLoader::load("Crypt::Eksblowfish", $VERSION);
 
@@ -179,7 +179,7 @@ Modifications and Perl interface by Andrew Main (Zefram)
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008, 2009, 2010
+Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011
 Andrew Main (Zefram) <zefram@fysh.org>
 
 The original Eksblowfish code (in the form of crypt()) from which

@@ -1,3 +1,6 @@
+use warnings;
+use strict;
+
 use Test::More tests => 49;
 
 BEGIN { use_ok "Crypt::Eksblowfish::Bcrypt", qw(en_base64 de_base64); }
@@ -11,6 +14,8 @@ while(<DATA>) {
 	is en_base64($bytes), $base64;
 	is de_base64($base64), $bytes;
 }
+
+1;
 
 __DATA__
 25 HO

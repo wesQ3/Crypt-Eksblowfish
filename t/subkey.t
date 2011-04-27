@@ -1,3 +1,6 @@
+use warnings;
+use strict;
+
 use Test::More tests => 42 + 6*10;
 
 BEGIN { use_ok "Crypt::Eksblowfish::Subkeyed"; }
@@ -76,6 +79,8 @@ while(<DATA>) {
 	is $tcipher->encrypt($pt), $tct;
 	is $tcipher->decrypt($tct), $pt;
 }
+
+1;
 
 __DATA__
 c2e05cec152b7f84 e7ae62039464d1a3 95360a60c9d8ae55

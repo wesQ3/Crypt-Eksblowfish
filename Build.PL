@@ -14,6 +14,8 @@ Module::Build->new(
 	configure_requires => {
 		"Module::Build" => 0,
 		"perl" => "5.006",
+		"strict" => 0,
+		"warnings" => 0,
 	},
 	build_requires => {
 		"ExtUtils::CBuilder" => "0.15",

@@ -42,7 +42,7 @@ use Carp qw(croak);
 use Crypt::Eksblowfish 0.005;
 use MIME::Base64 2.21 qw(encode_base64 decode_base64);
 
-our $VERSION = "0.008";
+our $VERSION = "0.009";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(bcrypt_hash en_base64 de_base64 bcrypt);
@@ -177,7 +177,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008, 2009, 2010
+Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011
 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE

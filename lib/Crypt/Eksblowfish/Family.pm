@@ -75,7 +75,7 @@ use Carp qw(croak);
 use Crypt::Eksblowfish 0.005;
 use Class::Mix 0.001 qw(genpkg);
 
-our $VERSION = "0.008";
+our $VERSION = "0.009";
 
 =head1 CONSTRUCTOR
 
@@ -185,7 +185,8 @@ sub as_class {
 		my $pkg = genpkg(__PACKAGE__."::");
 		no strict "refs";
 		@{"${pkg}::ISA"} = (ref($self));
-		*{"${pkg}::new_family"} = sub { croak $_[0]."->new_family called" };
+		*{"${pkg}::new_family"} =
+			sub { croak $_[0]."->new_family called" };
 		*{"${pkg}::cost"} = sub { $self->cost };
 		*{"${pkg}::salt"} = sub { $self->salt };
 		*{"${pkg}::new"} = sub { shift; $self->new(@_) };
@@ -207,7 +208,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2006, 2007, 2008, 2009, 2010
+Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011
 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
