@@ -1,7 +1,7 @@
 use warnings;
 use strict;
 
-use Test::More tests => 69;
+use Test::More tests => 81;
 
 BEGIN { use_ok "Crypt::Eksblowfish::Bcrypt", qw(bcrypt); }
 
@@ -34,3 +34,6 @@ $2a$05$CCCCCCCCCCCCCCCCCCCCC. VGOzA784oUp/Z0DY336zx7pLYAy0lwK U*U*
 $2a$05$XXXXXXXXXXXXXXXXXXXXXO AcXxm9kjPGEMsLznoKqmqw7tc8WCx4a U*U*U
 $2a$05$CCCCCCCCCCCCCCCCCCCCC. 7uG0VCzI2bS7j6ymqJi9CdcdxiRTWNy
 $2a$05$abcdefghijklmnopqrstuu 5s2v8.iXieOjg/.AySBTTZIIVFJeBui 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+$2y$05$CCCCCCCCCCCCCCCCCCCCC. E5YPO9kmyuRGyh0XouQYb4YMJKvyOeW U*U
+$2b$05$CCCCCCCCCCCCCCCCCCCCC. E5YPO9kmyuRGyh0XouQYb4YMJKvyOeW U*U
+$2b$05$abcdefghijklmnopqrstuu 5s2v8.iXieOjg/.AySBTTZIIVFJeBui 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-limit@72

@@ -134,12 +134,22 @@ so if others are desired then it necessary to examine the algorithm
 prefix in SETTINGS and dispatch between more than one version of C<crypt>.
 
 SETTINGS must be a string which encodes the algorithm parameters,
-including salt.  It must begin with "$2", optional "a", "$", two
-digits, "$", and 22 base 64 digits.  The rest of the string is ignored.
-The presence of the optional "a" means that a NUL is to be appended
-to the password before it is used as a key.  The two digits set the
-cost parameter.  The 22 base 64 digits encode the salt.  The function
-will C<die> if SETTINGS does not have this format.
+including salt.  It must begin with one of the recognised bcrypt
+prefix forms:
+
+		$2$     (historic, no password NUL termination)
+		$2a$    (standard, NUL-terminating variant a)
+		$2y$    (PHP crypt_blowfish fixed implementation)
+		$2b$    (OpenBSD 5.5+; fixed implementation)
+
+followed by two digits, "$", and 22 base64 digits (the salt).  The rest
+of the string is ignored.
+
+The function will C<die> if SETTINGS does not have this format.
+
+Note: bcrypt ignores (and this implementation truncates) password
+octets beyond 72 bytes.  Passing a longer passphrase will have the same
+effect as passing its first 72 bytes.
 
 The PASSWORD is hashed according to the SETTINGS.  The value returned
 is a string which encodes the algorithm parameters and the hash: the
@@ -153,7 +163,7 @@ of the string is ignored on input.
 sub bcrypt($$) {
 	my($password, $settings) = @_;
 	croak "bad bcrypt settings"
-		unless $settings =~ m#\A\$2(a?)\$([0-9]{2})\$
+		unless $settings =~ m#\A\$2([aby]?)\$([0-9]{2})\$
 					([./A-Za-z0-9]{22})#x;
 	my($key_nul, $cost, $salt_base64) = ($1, $2, $3);
 	my $hash = bcrypt_hash({
