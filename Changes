@@ -1,3 +1,8 @@
+{{$NEXT}}
+
+  * support $2y and $2b crypt modes (Wes Malone)
+    RT#93688
+
 version 0.009; 2011-04-28
 
   * in XS, use PERL_NO_GET_CONTEXT for efficiency
